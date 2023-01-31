@@ -1,12 +1,12 @@
-USE department_db;
+USE Employees;
 
-INSERT INTO department (name)
+INSERT INTO department (nane)
 VALUES ("Sales");
-INSERT INTO department (name)
+INSERT INTO department (nane)
 VALUES ("Engineering");
-INSERT INTO department (name)
+INSERT INTO department (nane)
 VALUES ("Finance");
-INSERT INTO department (name)
+INSERT INTO department (nane)
 VALUES ("Legal");
 
 INSERT INTO role (title, salary, department_id)
