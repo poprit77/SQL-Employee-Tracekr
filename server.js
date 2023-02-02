@@ -153,23 +153,27 @@ const ViewEmployeesByDepartment = () => {
   });
 };
 const ViewDepartmentBudget = () => {
-  const sql =     `SELECT department_id AS id, 
+  const sql = `SELECT department_id AS id, 
   department.department_name AS department,
   SUM(salary) AS budget
   FROM  role  
   INNER JOIN department ON role.department_id = department.id GROUP BY  role.department_id`;
-  con.query(sql, (error, response) =>{
-    if(error)throw error;
+  con.query(sql, (error, response) => {
+    if (error) throw error;
     console.table(response);
     Prompt();
-  })
+  });
 };
-const UpdateEmployeeRole = () => {};
+const UpdateEmployeeRole = () => {
+
+};
 const UpdateEmployeeManager = () => {};
 const AddEmployee = () => {};
 const AddRole = () => {};
 const AddDepartment = () => {};
-const RemoveEmployee = () => {};
+const RemoveEmployee = () => {
+
+};
 const RemoveRole = () => {};
 const RemoveDepartment = () => {};
 const Exit = () => {};
