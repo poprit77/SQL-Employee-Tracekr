@@ -3,11 +3,17 @@ const mysql = require('mysql2');
 require('dotenv').config();
 
 const con = mysql.createConnection({
-  host: '127.0.0.1',
-  port: 3000,
+  host: 'localhost',
+  port: 3250,
   user: 'root',
   password: process.env.DB_PASSWORD,
-  database: 'employees'
+  database: 'Employees'
+});
+
+con.connect(function (error)  {
+  if (error) throw error;
+  console.log("success");
+  Prompt();
 });
 
 module.exports = con;
