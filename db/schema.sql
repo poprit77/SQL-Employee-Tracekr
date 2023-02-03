@@ -5,7 +5,7 @@ USE Employees;
 
 CREATE TABLE department (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    nane VARCHAR(30)
+    dname_ VARCHAR(30)
 );
 
 CREATE TABLE role (

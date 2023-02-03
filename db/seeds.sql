@@ -1,12 +1,12 @@
 USE Employees;
 
-INSERT INTO department (nane)
+INSERT INTO department (dname_)
 VALUES ("Sales");
-INSERT INTO department (nane)
+INSERT INTO department (dname_)
 VALUES ("Engineering");
-INSERT INTO department (nane)
+INSERT INTO department (dname_)
 VALUES ("Finance");
-INSERT INTO department (nane)
+INSERT INTO department (dname_)
 VALUES ("Legal");
 
 INSERT INTO role (title, salary, department_id)

@@ -1,17 +1,17 @@
 const con = require("./db/connection");
-const inquirer= require("inquirer");
+const inquirer = require("inquirer");
 
-// con.connect(function (error)  {
-//   if (error) throw error;
-//   console.log("success");
-//   Prompt();
-// });
+con.connect(function (error) {
+  if (error) throw error;
+  console.log("success");
+  Prompt();
+});
 
 const Prompt = () => {
   inquirer
     .prompt([
       {
-        names: "choices",
+        name: "choices",
         type: "list",
         message: "please select an option",
         choices: [
@@ -88,29 +88,29 @@ const Prompt = () => {
       }
 
       if (choices === "Exit") {
-        connection.end();
+        con.end();
       }
     });
 };
 
-const viewAllRoles = () => {
-  const sql = `SELECT role.id, role.title, department.department_name AS department
-  FROM role
-  INNER JOIN department ON role.department_id = department.id`;
+function viewAllRoles() {
+  // console.log('Hellp1');
+  const sql =
+    "SELECT role.id, role.title, department.dname_ AS department FROM role INNER JOIN department ON role.department_id = department.id";
   con.query(sql, (error, response) => {
     if (error) throw error;
     response.forEach((role) => {
       console.log(role.title);
-      Prompt();
     });
+    Prompt();
   });
-};
+}
 const ViewAllEmployees = () => {
   const sql = `SELECT employee.id, 
                   employee.first_name, 
                   employee.last_name, 
                   role.title, 
-                  department.department_name AS 'department', 
+                  department.dname_ AS 'department', 
                   role.salary
                   FROM employee, role, department 
                   WHERE department.id = role.department_id 
@@ -123,7 +123,7 @@ const ViewAllEmployees = () => {
   });
 };
 const ViewAllDepartments = () => {
-  const sql = `SELECT department.id AS id, department.department_name AS department FROM department`;
+  const sql = `SELECT department.id AS id, department.dname_ AS department FROM department`;
   con.query(sql, (error, respomse) => {
     if (error) throw error;
     console.log(response);
@@ -133,7 +133,7 @@ const ViewAllDepartments = () => {
 const ViewEmployeesByDepartment = () => {
   const sql = `SELECT employee.first_name, 
   employee.last_name, 
-  department.department_name AS department
+  department.dname_ AS department
   FROM employee 
   LEFT JOIN role ON employee.role_id = role.id 
   LEFT JOIN department ON role.department_id = department.id`;
@@ -145,7 +145,7 @@ const ViewEmployeesByDepartment = () => {
 };
 const ViewDepartmentBudget = () => {
   const sql = `SELECT department_id AS id, 
-  department.department_name AS department,
+  department.dname_ AS department,
   SUM(salary) AS budget
   FROM  role  
   INNER JOIN department ON role.department_id = department.id GROUP BY  role.department_id`;
@@ -220,7 +220,7 @@ const UpdateEmployeeRole = () => {
 const UpdateEmployeeManager = () => {
   const sql = `SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id
   FROM employee`;
-  connection.promise().query(sql, (error, response) => {
+  con.promise().query(sql, (error, response) => {
     const employeeNamesArray = [];
     response.forEach((employee) => {
       employeeNamesArray.push(`${employee.first_name} ${employee.last_name}`);
@@ -342,7 +342,7 @@ const AddEmployee = () => {
                   crit.push(manager);
                   const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
                                   VALUES (?, ?, ?, ?)`;
-                  connection.query(sql, crit, (error) => {
+                  con.query(sql, crit, (error) => {
                     if (error) throw error;
                     console.log("Employee has been added!");
                     viewAllEmployees();
@@ -359,7 +359,7 @@ const AddRole = () => {
     if (error) throw error;
     const deptNamesArray = [];
     response.forEach((department) => {
-      deptNamesArray.push(department.department_name);
+      deptNamesArray.push(department.dname_);
     });
     deptNamesArray.push("Create Department");
     inquirer
@@ -400,7 +400,7 @@ const AddRole = () => {
           let departmentId;
 
           response.forEach((department) => {
-            if (departmentData.departmentName === department.department_name) {
+            if (departmentData.departmentName === department.dname_) {
               departmentId = department.id;
             }
           });
@@ -468,7 +468,7 @@ const RemoveEmployee = () => {
         });
 
         const sql = `DELETE FROM employee WHERE employee.id = ?`;
-        connection.query(sql, [employeeId], (error) => {
+        con.query(sql, [employeeId], (error) => {
           if (error) throw error;
           console.log(`Employee Successfully Removed`);
           viewAllEmployees();
@@ -514,12 +514,12 @@ const RemoveRole = () => {
   });
 };
 const RemoveDepartment = () => {
-  const sql = `SELECT department.id, department.department_name FROM department`;
+  const sql = `SELECT department.id, department.dname_ FROM department`;
   con.query(sql, (error, response) => {
     if (error) throw error;
     const departmentNamesArray = [];
     response.forEach((department) => {
-      departmentNamesArray.push(department.department_name);
+      departmentNamesArray.push(department.dname_);
     });
 
     inquirer
@@ -535,13 +535,13 @@ const RemoveDepartment = () => {
         let departmentId;
 
         response.forEach((department) => {
-          if (answer.chosenDept === department.department_name) {
+          if (answer.chosenDept === department.dname_) {
             departmentId = department.id;
           }
         });
 
         const sql = `DELETE FROM department WHERE department.id = ?`;
-        connection.promise().query(sql, [departmentId], (error) => {
+        con.promise().query(sql, [departmentId], (error) => {
           if (error) throw error;
           console.log(`Department Removed`);
           viewAllDepartments();
@@ -549,4 +549,3 @@ const RemoveDepartment = () => {
       });
   });
 };
-
