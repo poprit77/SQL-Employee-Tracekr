@@ -124,7 +124,7 @@ const ViewAllEmployees = () => {
 };
 const ViewAllDepartments = () => {
   const sql = `SELECT department.id AS id, department.dname_ AS department FROM department`;
-  con.query(sql, (error, respomse) => {
+  con.query(sql, (error, response) => {
     if (error) throw error;
     console.log(response);
     Prompt();
@@ -137,7 +137,7 @@ const ViewEmployeesByDepartment = () => {
   FROM employee 
   LEFT JOIN role ON employee.role_id = role.id 
   LEFT JOIN department ON role.department_id = department.id`;
-  con.query(sql, (error, repsonse) => {
+  con.query(sql, (error, response) => {
     if (error) throw error;
     console.log(response);
     Prompt();
@@ -162,7 +162,9 @@ const UpdateEmployeeRole = () => {
     if (error) throw error;
     const employeeNamesArray = [];
     response.forEach((employee) => {
-      employeeNamesArray.push(`${employee.first_name} ${employee.last_name}`);
+      employeeNamesArray.push(
+        `${employee.first_name} ${employee.last_name} ${employee.id}`
+      );
     });
 
     const sql = `SELECT role.id, role.title FROM role`;
@@ -200,13 +202,15 @@ const UpdateEmployeeRole = () => {
           response.forEach((employee) => {
             if (
               answer.chosenEmployee ===
-              `${employee.first_name} ${employee.last_name}`
+              `${employee.first_name} ${employee.last_name} ${employee.id}`
             ) {
-              employeeId = employee.id;
             }
+            employeeId = employee.id;
           });
 
           let sqls = `UPDATE employee SET employee.role_id = ? WHERE employee.id = ?`;
+          console.log(employeeId, newTitleId);
+
           con.query(sqls, [newTitleId, employeeId], (error) => {
             if (error) throw error;
             console.log("Role Updated");
@@ -220,7 +224,7 @@ const UpdateEmployeeRole = () => {
 const UpdateEmployeeManager = () => {
   const sql = `SELECT employee.id, employee.first_name, employee.last_name, employee.manager_id
   FROM employee`;
-  con.promise().query(sql, (error, response) => {
+  con.query(sql, (error, response) => {
     const employeeNamesArray = [];
     response.forEach((employee) => {
       employeeNamesArray.push(`${employee.first_name} ${employee.last_name}`);
@@ -258,18 +262,13 @@ const UpdateEmployeeManager = () => {
           }
         });
 
-        if (validate.isSame(answer.chosenEmployee, answer.newManager)) {
-          console.log(`Invalid Selection`);
-          Prompt();
-        } else {
-          let sql = `UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?`;
+        let sql = `UPDATE employee SET employee.manager_id = ? WHERE employee.id = ?`;
 
-          con.query(sql, [managerId, employeeId], (error) => {
-            if (error) throw error;
-            console.log("Manager Updated");
-            Prompt();
-          });
-        }
+        con.query(sql, [managerId, employeeId], (error) => {
+          if (error) throw error;
+          console.log("Manager Updated");
+          Prompt();
+        });
       });
   });
 };
@@ -345,7 +344,7 @@ const AddEmployee = () => {
                   con.query(sql, crit, (error) => {
                     if (error) throw error;
                     console.log("Employee has been added!");
-                    viewAllEmployees();
+                    ViewAllEmployees();
                   });
                 });
             });
@@ -386,13 +385,11 @@ const AddRole = () => {
             name: "newRole",
             type: "input",
             message: "What is the name of your new role?",
-            validate: validate.validateString,
           },
           {
             name: "salary",
             type: "input",
             message: "What is the salary of this new role?",
-            validate: validate.validateSalary,
           },
         ])
         .then((answer) => {
@@ -424,15 +421,14 @@ const AddDepartment = () => {
         name: "newDepartment",
         type: "input",
         message: "What is the name of your new Department?",
-        validate: validate.validateString,
       },
     ])
     .then((answer) => {
-      let sql = `INSERT INTO department (department_name) VALUES (?)`;
+      let sql = `INSERT INTO department (department.dname_) VALUES (?)`;
       con.query(sql, answer.newDepartment, (error, response) => {
         if (error) throw error;
         console.log(answer.newDepartment + ` Department created!`);
-        viewAllDepartments();
+        ViewAllDepartments();
       });
     });
 };
@@ -471,7 +467,7 @@ const RemoveEmployee = () => {
         con.query(sql, [employeeId], (error) => {
           if (error) throw error;
           console.log(`Employee Successfully Removed`);
-          viewAllEmployees();
+          ViewAllEmployees();
         });
       });
   });
@@ -541,10 +537,10 @@ const RemoveDepartment = () => {
         });
 
         const sql = `DELETE FROM department WHERE department.id = ?`;
-        con.promise().query(sql, [departmentId], (error) => {
+        con.query(sql, [departmentId], (error) => {
           if (error) throw error;
           console.log(`Department Removed`);
-          viewAllDepartments();
+          ViewAllDepartments();
         });
       });
   });
